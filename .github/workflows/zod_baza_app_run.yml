@@ -1,4 +1,4 @@
-name: Build Baza (custom)
+name: Build Baza (zod)
 
 on:
   workflow_dispatch:

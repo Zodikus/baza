@@ -1,0 +1,22 @@
+name: Build Baza (custom)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - uses: hyoo-ru/mam_build@master2
+      with:
+        package: 'giper/baza'
+        modules: 'app/run'
+    - uses: GlueOps/github-actions-build-push-containers@v0.4.5
+      with:
+        context: '${GITHUB_WORKSPACE}/giper/baza/app/run'
+        target_directory: 'nope'

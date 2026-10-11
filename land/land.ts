@@ -575,7 +575,7 @@ namespace $ {
 			
 			for( const unit of units ) {
 				if( unit instanceof $giper_baza_auth_pass ) {
-					passes.set( unit.hash().str, unit )
+					passes.set( unit.lord().str, unit )
 				}
 			}
 			

@@ -315,56 +315,48 @@ namespace $ {
 		
 		@ $mol_mem
 inherit() {
-	
-	const area = this.link()
-	const lord = this.link().lord()
-	if( area.str === lord.str ) return
-	
-	const Lord = this.$.$giper_baza_glob.Land( lord )
-	Lord.units_saving()
-	
-	const units = new Set< $giper_baza_unit >()
-	
-	for( const gift of Lord._gift.values() ) {
-		
-		const prev = $mol_wire_sync( this._gift ).get( gift.mate().str )
-		if( $giper_baza_unit_gift.compare( prev, gift ) <= 0 ) continue
-		
-		const seal = Lord.unit_seal( gift )
-		if( !seal ) continue
-		
-		const pass_lord = Lord.lord_pass( gift.lord() )
-		if( !pass_lord ) continue
-		
-		const mate = gift.mate()
-		let pass_mate: $giper_baza_auth_pass | null = null
-		if( mate.str ) {
-			pass_mate = Lord.lord_pass( mate )
-			if( !pass_mate ) continue
-		}
-		
-		units.add( gift )
-		units.add( seal )
-		units.add( pass_lord )
-		if( pass_mate ) units.add( pass_mate )
-		
-	}
-	
-	let part = $giper_baza_pack_part.from([ ... units ])
-	const pack = $giper_baza_pack.make([[ this.link().str, part ]])
-	
-	part = pack.parts()[0][1]
-	this.diff_apply( part.units )
-	
+    
+    const area = this.link()
+    const lord = this.link().lord()
+    if( area.str === lord.str ) return
+    
+    const Lord = this.$.$giper_baza_glob.Land( lord )
+    Lord.units_saving()
+    
+    const units = new Set< $giper_baza_unit >()
+    
+    for( const gift of Lord._gift.values() ) {
+        
+        const prev = $mol_wire_sync( this._gift ).get( gift.mate().str )
+        if( $giper_baza_unit_gift.compare( prev, gift ) <= 0 ) continue
+        
+        const seal = Lord.unit_seal( gift )
+        if( !seal ) continue
+        
+        const pass_lord = Lord.lord_pass( gift.lord() )
+        if( !pass_lord ) continue
+        
+        const mate = gift.mate()
+        let pass_mate: $giper_baza_auth_pass | null = null
+        if( mate.str ) {
+            pass_mate = Lord.lord_pass( mate )
+            if( !pass_mate ) continue
+        }
+        
+        units.add( gift )
+        units.add( seal )
+        units.add( pass_lord )
+        if( pass_mate ) units.add( pass_mate )
+        
+    }
+    
+    let part = $giper_baza_pack_part.from([ ... units ])
+    const pack = $giper_baza_pack.make([[ this.link().str, part ]])
+    
+    part = pack.parts()[0][1]
+    this.diff_apply( part.units )
+    
 }
-			
-			let part = $giper_baza_pack_part.from([ ... units ])
-			const pack = $giper_baza_pack.make([[ this.link().str, part ]])
-			
-			part = pack.parts()[0][1]
-			this.diff_apply( part.units )
-			
-		}
 		
 		/** Data root */
 		@ $mol_mem_key
@@ -590,10 +582,10 @@ inherit() {
 			const mixin_lord = this.link().lord().toBin()
 			
 			for( const unit of units ) {
-				if( unit instanceof $giper_baza_auth_pass ) {
-					passes.set( unit.lord().str, unit )
-				}
-			}
+    if( unit instanceof $giper_baza_auth_pass ) {
+        passes.set( unit.lord().str, unit )
+    }
+}
 			
 			for( const unit of units ) if( unit instanceof $giper_baza_unit_seal ) {
 				

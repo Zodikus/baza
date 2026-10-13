@@ -15,8 +15,16 @@ namespace $.$$ {
 		@ $mol_mem
 		sub() {
 			return [
-				... this.enabled() ? [ this.Tools() ] : [],
 				this.Content(),
+				... this.enabled() ? [ this.Tools() ] : [],
+			]
+		}
+		
+		@ $mol_mem
+		tools() {
+			return [
+				... this.search_active() ? [ this.Search_panel() ] : [],
+				this.Main(),
 			]
 		}
 		

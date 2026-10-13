@@ -186,26 +186,33 @@ namespace $.$$ {
 		override block_unwrap( event: KeyboardEvent ) {
 			
 			const sel = $mol_dom_range.from_selection()!
-			if( !sel.is_empty() ) return
-				
-			let box = sel.container() as Element
-			if( box.nodeType !== box.ELEMENT_NODE ) box = box.parentNode as Element
+			const root = this.Content().dom_node()
+			let range = sel.lifted()
+			let container = range.container() as Element
 			
-			while( box ) {
-				
-				if( box === this.Content().dom_node() ) return
-				
-				if( box.localName === 'p' ) {
-					const parent = box.parentNode as Element
-					if( parent === this.Content().dom_node() ) return
-					// $mol_dom_range.around( box ).split() ???
-					while( parent.firstChild ) parent.parentNode!.insertBefore( parent.firstChild!, parent )
-					parent.remove()
-					break
-				}
-				
-				box = box.parentNode as Element
+			const paragraph = container.closest( 'p' )
+			if( paragraph ) {
+				range = $mol_dom_range.around( paragraph )
+				container = paragraph.parentElement!
 			}
+			
+			if( container === root ) return
+			
+			if( range.anchor.pos !== 0 ) {
+				const prev = container.cloneNode()
+				while( range.anchor.node.previousSibling ) prev.insertBefore( range.anchor.node.previousSibling, prev.firstChild )
+				prev.insertBefore( range.anchor.node, null )
+				container.before( prev )
+			}
+			
+			if( range.extend.node.nextSibling ) {
+				const next = container.cloneNode()
+				while( range.extend.node.nextSibling ) next.appendChild( range.extend.node.nextSibling )
+				container.after( next )
+			}
+			
+			while( container.firstChild ) container.before( container.firstChild )
+			container.remove()
 			
 			this.selection_load()
 			this.save()

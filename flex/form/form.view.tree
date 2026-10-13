@@ -5,6 +5,11 @@ $giper_baza_flex_form $mol_list
 		<= Field*0 $mol_expander
 			title <= field_name* \
 			expanded? <=> field_expanded*? true
+			Tools <= Field_tools* $mol_bar
+				sub <= field_tools* /
+					<= Field_link* $mol_link
+						uri <= field_uri* \
+						sub / <= Field_link_icon* $mol_icon_link_variant
 			content / <= Field_content* $mol_view sub / <= Field_control* $giper_baza_flex_field
 				pawn? <=> field_pawn*? $giper_baza_pawn
 				prop <= field_prop* $giper_baza_flex_prop

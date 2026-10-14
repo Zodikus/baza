@@ -26,6 +26,17 @@ namespace $.$$ {
 			return prop.name()
 		}
 		
+		@ $mol_mem_key
+		field_tools( prop: $giper_baza_flex_prop ) {
+			return [
+				... this.field_pawn( prop ) ? [ this.Field_link( prop ) ] : []
+			]
+		}
+		
+		field_uri( prop: $giper_baza_flex_prop ) {
+			return this.$.$mol_state_arg.link({ link: ( this.field_pawn( prop ) ?? this.pawn() ).link().str })
+		}
+		
 		field_pawn( prop: $giper_baza_flex_prop, auto?: any ) {
 			return this.pawn().cast( $giper_baza_dict ).dive( prop.Path(auto)?.val() ?? prop.link(), $giper_baza_pawn, auto )!
 		}

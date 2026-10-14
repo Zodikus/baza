@@ -1,6 +1,13 @@
 namespace $ {
-	if( $mol_dom.document ) $giper_baza_yard.masters_default.push( $mol_dom.document.location.origin + '/' )
-
-	const orig = $giper_baza_yard.masters_override.bind( $giper_baza_yard )
-	$giper_baza_yard.masters_override = () => orig() ?? [ $mol_dom.document.location.origin + '/' ]
+	
+	$giper_baza_yard.masters_default.length = 0
+	$giper_baza_yard.masters = (): string[] => []
+	
+	const custom = $mol_state_arg.value( 'zod' )
+		?? ( $mol_dom.document ? $mol_dom.document.location.origin + '/' : '' )
+	
+	if( custom ) {
+		$giper_baza_yard.masters_default.unshift( custom )
+	}
+	
 }

@@ -97,7 +97,7 @@ namespace $ {
 
 		const lord_pass_base = land_class.lord_pass
 
-		land_class.lord_pass = function( lord: $giper_baza_link ) {
+		land_class.lord_pass = function( lord: any ) {
 			try {
 				return lord_pass_base.call( this, lord )
 			} catch {
@@ -107,26 +107,16 @@ namespace $ {
 
 		const diff_apply_base = land_class.diff_apply
 
-		land_class.diff_apply = function(
-			units: readonly $giper_baza_unit[],
-			skip_load?: 'skip_load',
-		) {
+		land_class.diff_apply = function( units: any, skip_load?: any ) {
 			try {
 				return diff_apply_base.call( this, units, skip_load )
 			} catch( error ) {
 				const msg = String(( error as Error )?.message ?? error )
 				if( !/^No (Pass|Seal) for /.test( msg ) ) throw error
-				this.$.$mol_log3_warn({
-					place: `${ this }.diff_apply()`,
-					message: msg,
-					hint: 'Foreign units skipped. Data kept. Wait for full peer resync.',
-					units: units.length,
-				})
+				console.warn( `[baza-autonomy] foreign unit skipped: ${ msg }` )
 				return []
 			}
 		}
 	}
-
-}
 
 }

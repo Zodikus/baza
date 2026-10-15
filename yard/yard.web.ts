@@ -17,8 +17,12 @@ namespace $ {
 	 *
 	 * Точки вмешательства:
 	 *   A) $giper_baza_yard.masters() — список целей синхронизации (yard.ts:39).
-	 *   B) window.WebSocket — страховка на сокете (yard.ts:71): закрывает сокет
-	 *      до onopen, если хост не в allow-list.
+	 *   B) window.WebSocket — страховка на сокете (yard.ts:71): «мёртвый» сокет
+	 *      к хостам вне allow-list, чтобы трафик наружу не уходил.
+	 *   C) Мягкая верификация — единственный допустимый «патч чтения»: отсутствие
+	 *      pass у чужих лордов (канал к ним закрыт) больше не роняет UI с
+	 *      "No Pass for Lord". Данные НЕ вырезаются — просто непроверяемые seals
+	 *      молча не применяются до появления живого peer-resync.
 	 */
 
 	const local = typeof location !== 'undefined'
@@ -71,5 +75,58 @@ namespace $ {
 
 		$mol_dom_context.WebSocket = $giper_baza_ws_guarded as any
 	}
+
+	// --- C) Мягкая верификация seals чужих лордов.
+	// В стоковом протоколе pass лорда приходит ТОЛЬКО внутри gift от него же
+	// (land.ts:648-650). Канал к чужим пирам закрыт => их seals/sands есть в
+	// state, а их pass нет => diff_apply падает с "No Pass for Lord" (585),
+	// loading() переигрывает те же units и падает снова — каскад при каждом
+	// заходе на stat/glob. Живой handshake офлайн невозможен: приватных ключей
+	// пиров у нас нет, поддельный [pass+gift] не прошёл бы verify().
+	//
+	// Корректная деградация: seal без известного pass НЕ применять (его подписи
+	// всё равно некому проверить), но НЕ ронять весь пакет — иначе чужие ленды
+	// вычищаются из state, ссылки на них остаются в графе и UI зависает
+	// (проверено эмпирически). По хинту самого протокола ("Relax and wait for
+	// full peer resync") при появлении живого канала штатный summ-resync
+	// (land.ts:481-497) доведёт граф до целостного состояния сам.
+	const land_class = $giper_baza_land.prototype as any
+	if( land_class.$giper_baza_soft_pass !== true ) {
+
+		land_class.$giper_baza_soft_pass = true
+
+		const lord_pass_base = land_class.lord_pass
+
+		land_class.lord_pass = function( lord: $giper_baza_link ) {
+			try {
+				return lord_pass_base.call( this, lord )
+			} catch {
+				return null
+			}
+		}
+
+		const diff_apply_base = land_class.diff_apply
+
+		land_class.diff_apply = function(
+			units: readonly $giper_baza_unit[],
+			skip_load?: 'skip_load',
+		) {
+			try {
+				return diff_apply_base.call( this, units, skip_load )
+			} catch( error ) {
+				const msg = String(( error as Error )?.message ?? error )
+				if( !/^No (Pass|Seal) for /.test( msg ) ) throw error
+				this.$.$mol_log3_warn({
+					place: `${ this }.diff_apply()`,
+					message: msg,
+					hint: 'Foreign units skipped. Data kept. Wait for full peer resync.',
+					units: units.length,
+				})
+				return []
+			}
+		}
+	}
+
+}
 
 }

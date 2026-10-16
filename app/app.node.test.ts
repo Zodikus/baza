@@ -16,7 +16,7 @@ namespace $.$$ {
 
 			app.GET( $mol_rest_message.make({
 				method: ()=> 'GET',
-				uri: ()=> new URL( `http://baza.giper.dev/?BAZA:file=${ file.link().str };name=hello.md` ),
+				uri: ()=> new URL( `http://baza.giper.dev/hello.md?BAZA:file=${ file.link().str }` ),
 				port: $mol_rest_port.make({
 					send_code: code => res.push( code ),
 					send_type: type => res.push( type ),
@@ -38,7 +38,7 @@ namespace $.$$ {
 
 			app.GET( $mol_rest_message.make({
 				method: ()=> 'GET',
-				uri: ()=> new URL( `http://baza.giper.dev/?BAZA:file=${ link.str };name=ghost.md` ),
+				uri: ()=> new URL( `http://baza.giper.dev/ghost.md?BAZA:file=${ link.str }` ),
 				port: $mol_rest_port.make({
 					send_code: code => res.push( code ),
 					send_type: type => res.push( type ),
@@ -63,7 +63,7 @@ namespace $.$$ {
 
 			app.GET( $mol_rest_message.make({
 				method: ()=> 'GET',
-				uri: ()=> new URL( `http://baza.giper.dev/?BAZA:file=${ file.link().str };name=secret.bin` ),
+				uri: ()=> new URL( `http://baza.giper.dev/secret.bin?BAZA:file=${ file.link().str }` ),
 				port: $mol_rest_port.make({
 					send_code: code => res.push( code ),
 					send_type: type => res.push( type ),

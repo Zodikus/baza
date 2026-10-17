@@ -20,14 +20,20 @@ namespace $.$$ {
 				port: $mol_rest_port.make({
 					send_code: code => res.push( code ),
 					send_type: type => res.push( type ),
+					send_prop: ( name, value ) => res.push([ name, value ]),
 					send_bin: bin => res.push( bin ),
 				}),
 			}) )
 
-			$mol_assert_equal( res, [ 200, 'application/octet-stream', content ] )
+			$mol_assert_equal( res, [
+				200,
+				$giper_baza_file_csp,
+				'text/markdown',
+				content,
+			] )
 
 		},
-
+		
 		'GET ?BAZA:file=<unknown> returns 404'( $ ) {
 
 			const link = new $giper_baza_link( '99999999_99999999' )

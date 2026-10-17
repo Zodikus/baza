@@ -1,10 +1,9 @@
 namespace $ {
 
-	export function $giper_baza_file_mime_safe( type: string ) {
-		return [ 'audio', 'video', 'image', 'font' ].includes( type.replace( /\/.*$/, '' ) )
-			? type
-			: 'application/octet-stream'
-	}
+	export const $giper_baza_file_csp = [
+		'Content-Security-Policy',
+		"sandbox; default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; img-src data:; media-src data:; form-action 'none'",
+	] as const
 	
 	export const $giper_baza_file_query = $hyoo_harp_scheme({
 		BAZA: $hyoo_harp_scheme({}),

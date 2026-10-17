@@ -21,9 +21,10 @@ namespace $ {
 					status: file.filled() ? 200 : 404,
 					statusText: file.filled() ? 'OK' : 'Not Filled',
 					headers: {
-						'Content-Type': $giper_baza_file_mime_safe( file.type() ),
+						'Content-Type': file.type(),
 						'X-Content-Type-Options': 'nosniff',
 						'X-Powered-By': '$giper_baza_file',
+						... Object.fromEntries([ $giper_baza_file_csp ]),
 					},
 				} )
 				

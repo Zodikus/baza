@@ -25,7 +25,8 @@ namespace $ {
 			const file = land.Pawn( $giper_baza_file ).Head( link.head() )
 
 			msg.port.send_code( file.filled() ? 200 : 404 )
-			msg.port.send_type( $giper_baza_file_mime_safe( file.type() ) as $mol_rest_port_mime )
+			msg.port.send_prop( ... $giper_baza_file_csp )
+			msg.port.send_type( file.type() as $mol_rest_port_mime )
 			msg.port.send_bin( file.buffer() )
 
 		}

@@ -12,7 +12,9 @@ namespace $ {
 			const id = query.file['=']?.[0][0]
 			if( !id ) return
 			
-			const link = new $giper_baza_link( id )
+			const link = $giper_baza_link.check( id )
+			if( !link ) return event.respondWith( new Response( null, { status: 400 } ) )
+
 			const file = $.$giper_baza_glob.Pawn( link, $giper_baza_file )
 			
 			return event.respondWith( $mol_wire_async( file ).blob().then( blob => {
@@ -21,9 +23,10 @@ namespace $ {
 					status: file.filled() ? 200 : 404,
 					statusText: file.filled() ? 'OK' : 'Not Filled',
 					headers: {
-						'Content-Type': $giper_baza_file_mime_safe( file.type() ),
+						'Content-Type': file.type(),
 						'X-Content-Type-Options': 'nosniff',
 						'X-Powered-By': '$giper_baza_file',
+						... Object.fromEntries([ $giper_baza_file_csp ]),
 					},
 				} )
 				

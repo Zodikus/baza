@@ -18,14 +18,17 @@ namespace $ {
 
 			if( !id ) return super.GET( msg )
 
-			const link = new $giper_baza_link( id )
+			const link = $giper_baza_link.check( id )
+			if( !link ) return msg.port.send_code( 400 )
+
 			const land = this.$.$giper_baza_glob.Land( link.land() )
 			if( land.encrypted() ) return msg.port.send_code( 403 )
 
 			const file = land.Pawn( $giper_baza_file ).Head( link.head() )
 
 			msg.port.send_code( file.filled() ? 200 : 404 )
-			msg.port.send_type( $giper_baza_file_mime_safe( file.type() ) as $mol_rest_port_mime )
+			msg.port.send_prop( ... $giper_baza_file_csp )
+			msg.port.send_type( file.type() as $mol_rest_port_mime )
 			msg.port.send_bin( file.buffer() )
 
 		}

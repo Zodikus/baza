@@ -72,7 +72,9 @@ namespace $ {
 					graph.link( seal, null, 0 ) // seal -> every
 					
 					for( const hash of seal.hash_list() ) {
-						graph.link( nodes.get( hash.str ) ?? null, seal, 1 ) // unit => seal
+						const node = nodes.get( hash.str )
+						if( !node ) continue
+						graph.link( node, seal, 1 ) // unit => seal
 					}
 					
 				}

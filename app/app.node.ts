@@ -22,6 +22,7 @@ namespace $ {
 			if( !link ) return msg.port.send_code( 400 )
 
 			const land = this.$.$giper_baza_glob.Land( link.land() )
+			land.loading()
 			if( land.encrypted() ) return msg.port.send_code( 403 )
 
 			const file = land.Pawn( $giper_baza_file ).Head( link.head() )

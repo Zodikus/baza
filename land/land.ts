@@ -1476,7 +1476,7 @@ namespace $ {
 		encrypted( next?: boolean ) {
 			
 			$mol_wire_solid()
-			if( !this._gift.size ) this.loading()
+			// if( !this._gift.size ) this.loading()
 			
 			const gift = this._gift.get( this.link().str )
 			const prev = gift?.code_exists() ?? false

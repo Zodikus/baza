@@ -462,9 +462,10 @@ namespace $ {
 			for( const gift of this._gift.values() ) {
 				collect( gift )
 				if( gift.mate().str ) {
-					if( skip_faces.has( gift.lord().peer().str ) ) continue
+					if( skip_faces.has( gift.mate().peer().str ) ) continue
 					const mate_pass = this.lord_pass( gift.mate() )
-					if( mate_pass ) passes.add( mate_pass )
+					if( !mate_pass ) return $mol_fail( new Error( 'No pass for mate' ) )
+					passes.add( mate_pass )
 				}
 			}
 			

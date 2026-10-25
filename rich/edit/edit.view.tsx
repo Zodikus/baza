@@ -183,7 +183,13 @@ namespace $.$$ {
 			event.preventDefault()
 		}
 		
+		override block_rewrap( event: KeyboardEvent ) {
+			this.block_wrap( 'ul', event )
+		}
+		
 		override block_unwrap( event: KeyboardEvent ) {
+			
+			event.preventDefault()
 			
 			const sel = $mol_dom_range.from_selection()!
 			const root = this.Content().dom_node()
@@ -199,10 +205,16 @@ namespace $.$$ {
 			if( container === root ) return
 			
 			if( range.anchor.pos !== 0 ) {
+				
 				const prev = container.cloneNode()
-				while( range.anchor.node.previousSibling ) prev.insertBefore( range.anchor.node.previousSibling, prev.firstChild )
+				
+				while( range.anchor.node.previousSibling ) {
+					prev.insertBefore( range.anchor.node.previousSibling, prev.firstChild )
+				}
+				
 				prev.insertBefore( range.anchor.node, null )
 				container.before( prev )
+				
 			}
 			
 			if( range.extend.node.nextSibling ) {
@@ -217,7 +229,6 @@ namespace $.$$ {
 			this.selection_load()
 			this.save()
 			
-			event.preventDefault()
 		}
 		
 		/** Wraps selecion to given element type. */

@@ -154,28 +154,20 @@ namespace $.$$ {
 		// 	obs.observe( this.Body(), { attributes: true, childList: true, subtree: true, characterData: true } )
 		// }
 		
-		override block_wrap( Type: string, event: KeyboardEvent ) {
+		blocks_selected() {
 			
 			const sel = $mol_dom_range.from_selection()!
-			if( !sel.is_empty() ) return
+			const node = sel.container()
+			const box = node.nodeType === node.ELEMENT_NODE ? node : node.parentElement!
 			
-			let box = sel.container() as Element
-			if( box.nodeType !== box.ELEMENT_NODE ) box = box.parentNode as Element
+			const paragraph = ( box as Element ).closest( 'p' )
+			return paragraph ? $mol_dom_range.around( paragraph ) : sel.lifted()
 			
-			while( box ) {
-				
-				if( box === this.Content().dom_node() ) {
-					$mol_dom_range.inside( box ).surround( <p/> ).surround( <Type/> )
-					break
-				}
-				
-				if( box.localName === 'p' ) {
-					$mol_dom_range.around( box ).surround( <Type/> )
-					break
-				}
-				
-				box = box.parentNode as Element
-			}
+		}
+		
+		override block_wrap( Type: string, event: KeyboardEvent ) {
+			
+			this.blocks_selected().surround( <Type/> )
 			
 			this.selection_load()
 			this.save()
@@ -191,16 +183,9 @@ namespace $.$$ {
 			
 			event.preventDefault()
 			
-			const sel = $mol_dom_range.from_selection()!
+			const range = this.blocks_selected()
 			const root = this.Content().dom_node()
-			let range = sel.lifted()
-			let container = range.container() as Element
-			
-			const paragraph = container.closest( 'p' )
-			if( paragraph ) {
-				range = $mol_dom_range.around( paragraph )
-				container = paragraph.parentElement!
-			}
+			const container = range.container() as Element
 			
 			if( container === root ) return
 			

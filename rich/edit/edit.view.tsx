@@ -176,7 +176,14 @@ namespace $.$$ {
 		}
 		
 		override block_rewrap( event: KeyboardEvent ) {
-			this.block_wrap( 'ul', event )
+			
+			const range = this.blocks_selected()
+			const box = range.container()
+			const root = this.Content().dom_node()
+			
+			const type =  box === root ? 'ul' : ( box as Element ).localName
+			this.block_wrap( type, event )
+			
 		}
 		
 		override block_unwrap( event: KeyboardEvent ) {

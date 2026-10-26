@@ -154,28 +154,20 @@ namespace $.$$ {
 		// 	obs.observe( this.Body(), { attributes: true, childList: true, subtree: true, characterData: true } )
 		// }
 		
-		override block_wrap( Type: string, event: KeyboardEvent ) {
+		blocks_selected() {
 			
 			const sel = $mol_dom_range.from_selection()!
-			if( !sel.is_empty() ) return
+			const node = sel.container()
+			const box = node.nodeType === node.ELEMENT_NODE ? node : node.parentElement!
 			
-			let box = sel.container() as Element
-			if( box.nodeType !== box.ELEMENT_NODE ) box = box.parentNode as Element
+			const paragraph = ( box as Element ).closest( 'p' )
+			return paragraph ? $mol_dom_range.around( paragraph ) : sel.lifted()
 			
-			while( box ) {
-				
-				if( box === this.Content().dom_node() ) {
-					$mol_dom_range.inside( box ).surround( <p/> ).surround( <Type/> )
-					break
-				}
-				
-				if( box.localName === 'p' ) {
-					$mol_dom_range.around( box ).surround( <Type/> )
-					break
-				}
-				
-				box = box.parentNode as Element
-			}
+		}
+		
+		override block_wrap( Type: string, event: KeyboardEvent ) {
+			
+			this.blocks_selected().surround( <Type/> )
 			
 			this.selection_load()
 			this.save()
@@ -183,26 +175,38 @@ namespace $.$$ {
 			event.preventDefault()
 		}
 		
+		override block_rewrap( event: KeyboardEvent ) {
+			
+			const range = this.blocks_selected()
+			const box = range.container()
+			const root = this.Content().dom_node()
+			
+			const type =  box === root ? 'ul' : ( box as Element ).localName
+			this.block_wrap( type, event )
+			
+		}
+		
 		override block_unwrap( event: KeyboardEvent ) {
 			
-			const sel = $mol_dom_range.from_selection()!
-			const root = this.Content().dom_node()
-			let range = sel.lifted()
-			let container = range.container() as Element
+			event.preventDefault()
 			
-			const paragraph = container.closest( 'p' )
-			if( paragraph ) {
-				range = $mol_dom_range.around( paragraph )
-				container = paragraph.parentElement!
-			}
+			const range = this.blocks_selected()
+			const root = this.Content().dom_node()
+			const container = range.container() as Element
 			
 			if( container === root ) return
 			
 			if( range.anchor.pos !== 0 ) {
+				
 				const prev = container.cloneNode()
-				while( range.anchor.node.previousSibling ) prev.insertBefore( range.anchor.node.previousSibling, prev.firstChild )
+				
+				while( range.anchor.node.previousSibling ) {
+					prev.insertBefore( range.anchor.node.previousSibling, prev.firstChild )
+				}
+				
 				prev.insertBefore( range.anchor.node, null )
 				container.before( prev )
+				
 			}
 			
 			if( range.extend.node.nextSibling ) {
@@ -217,7 +221,6 @@ namespace $.$$ {
 			this.selection_load()
 			this.save()
 			
-			event.preventDefault()
 		}
 		
 		/** Wraps selecion to given element type. */

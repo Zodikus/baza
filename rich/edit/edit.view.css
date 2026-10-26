@@ -52,14 +52,14 @@
 	padding: 0 1.5rem;
 }
 
-[giper_baza_rich_edit_content] ul > p:before {
+/* [giper_baza_rich_edit_content] ul > p:before {
 	content: '• ';
     color: var(--mol_theme_shade);
 	width: 0;
     display: inline-flex;
     white-space: pre;
     flex-direction: row-reverse;
-}
+} */
 
 [giper_baza_rich_edit_content] ol {
 	margin: 0;

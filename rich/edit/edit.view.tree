@@ -29,13 +29,13 @@ $giper_baza_rich_edit $mol_view
 	sub /
 		<= Tools $mol_float sub <= tools /
 			<= Main $mol_bar sub /
-				<= Undo_button $mol_button_minor
+				- <= Undo_button $mol_button_minor
 					hint @ \Undo (Ctrl+Z)
 					enabled? <=> selected? false
 					click? <=> undo?
 					sub /
 						<= Undo_icon $mol_icon_undo
-				<= Redo_button $mol_button_minor
+				- <= Redo_button $mol_button_minor
 					hint @ \Redo (Ctrl+Shift+Z)
 					enabled? <=> selected? false
 					click? <=> redo?
@@ -79,6 +79,7 @@ $giper_baza_rich_edit $mol_view
 						<= Preformat_icon $mol_icon_xml
 				<= Inline_format_menu $mol_pick
 					hint @ \Inline Formating
+					trigger_enabled? <=> selected? false
 					trigger_content /
 						<= Inline_format_menu_icon $mol_icon_marker
 					bubble_content /
@@ -107,7 +108,7 @@ $giper_baza_rich_edit $mol_view
 							hint \Alt+C
 							enabled? <=> selected? false
 							click? <=> inline_toggle*code?
-				<= Search_toggle $mol_check_icon
+				- <= Search_toggle $mol_check_icon
 					hint @ \Search / Replace
 					checked? <=> search_active? false
 					sub /

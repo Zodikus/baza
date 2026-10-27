@@ -23,7 +23,7 @@ namespace $.$$ {
 		@ $mol_mem
 		tools() {
 			return [
-				... this.search_active() ? [ this.Search_panel() ] : [],
+				// ... this.search_active() ? [ this.Search_panel() ] : [],
 				this.Main(),
 			]
 		}
@@ -181,8 +181,10 @@ namespace $.$$ {
 			const box = range.container()
 			const root = this.Content().dom_node()
 			
-			const type =  box === root ? 'ul' : ( box as Element ).localName
-			this.block_wrap( type, event )
+			const fractal = [ 'ol', 'pre' ]
+			const type = ( box as Element ).localName
+			
+			this.block_wrap( fractal.includes( type ) ? type : 'ul', event )
 			
 		}
 		
@@ -260,35 +262,64 @@ namespace $.$$ {
 			event.preventDefault()
 		}
 		
-		override paste( event?: ClipboardEvent ) {
+		override paste( event: ClipboardEvent ) {
+			
+			event.preventDefault()
 			
 			const sel = $mol_dom_range.from_selection()!
-			const html = event!.clipboardData!.getData( 'text/html' )
-			const text = event!.clipboardData!.getData( 'text/plain' )
+			const trans = $mol_dom_event.wrap( event ).transfer()!
 			
-			let url = true
-			try { new URL( text ) }
-			catch { url = false }
-			
-			if( url ) {
+			if( trans.files().length ) {
 				
-				if( sel.is_empty() ) {
-					sel.paste( <a href={text}>{text}</a> )
-				} else {
-					sel.surround( <a href={text} /> )
+				const blob = trans.files().item(0)!
+				const area = this.pawn().land().area_make()
+				const file = area.Data( $giper_baza_file )
+				
+				if( blob.size > 1024**2 ) return
+				
+				if( blob.type.startsWith( 'image/' ) ) { 
+				
+					file.type( blob.type )
+					file.name( blob.name )
+					file.buffer( $mol_wire_sync( blob ).bytes() )
+					
+					file.land().units_saving()
+					
+					const img = $mol_wire_sync( $mol_picture ).load( file.uri() )
+					const [ width, height ] = $mol_picture.sizes( img )
+					
+					sel.paste( <img src={ file.uri() } width={ width } height={ height } /> )
+					
 				}
 				
 			} else {
+			
+				const html = trans.get( 'text/html' )
+				const text = trans.get( 'text/plain' )
 				
-				const data = html ? $mol_dom_range.inside( $mol_dom_parse( html ).documentElement ).copy() : new Text( text )
-				sel.paste( data )
+				let url = true
+				try { new URL( text ) }
+				catch { url = false }
+				
+				if( url ) {
+					
+					if( sel.is_empty() ) {
+						sel.paste( <a href={text}>{text}</a> )
+					} else {
+						sel.surround( <a href={text} /> )
+					}
+					
+				} else {
+					
+					const data = html ? $mol_dom_range.inside( $mol_dom_parse( html ).documentElement ).copy() : new Text( text )
+					sel.paste( data )
+					
+				}
 				
 			}
 			
 			this.selection_load()
 			this.save()
-			
-			event?.preventDefault()
 			
 		}
 		

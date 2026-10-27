@@ -89,11 +89,11 @@
 	padding: 0 var(--mol_gap_block);
 	border-radius: var(--mol_gap_round);
 	overflow-x: auto;
+	box-shadow: inset 1px 0 var(--mol_theme_line);
 }
 
 [giper_baza_rich_edit_content] img {
-	margin: var(--mol_gap_block);
-	max-width: calc( 100% - 2 * var(--mol_gap_block) );
+	max-width: 100%;
 }
 
 [giper_baza_rich_edit_content] strong {

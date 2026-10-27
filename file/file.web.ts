@@ -21,9 +21,11 @@ namespace $ {
 				
 				return new Response( blob, {
 					status: file.filled() ? 200 : 404,
-					statusText: file.filled() ? 'OK' : 'Not Filled',
+					statusText: file.filled() ? 'OK' : 'Not Found',
 					headers: {
 						'Content-Type': file.type(),
+						'Content-Length': String( blob.size ),
+						'Cache-Control': 'private, immutable',
 						'X-Content-Type-Options': 'nosniff',
 						'X-Powered-By': '$giper_baza_file',
 						... Object.fromEntries([ $giper_baza_file_csp ]),

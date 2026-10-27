@@ -20,17 +20,21 @@ namespace $ {
 	}) {
 		
 		/** Persistent URI to file content */
+		@ $mol_mem
 		uri() {
-			return `${ this.name() }?BAZA:file=${ this.link() }`
+			const time = this.last_change()?.valueOf() ?? 0
+			return `${ this.name() }?BAZA:file=${ this.link() };time=${ time }`
 		}
 		
 		/** File name */
 		name( next?: string | null ) {
-			const ext = {
-				'text/plain': 'txt',
-				'application/json': 'json',
-			}[ this.type() ] ?? 'bin'
-			return this.Name( next )?.val( next ) ?? `${ this.link() }.${ ext }`
+			
+			const name = this.Name( next )?.val( next )
+			if( name ) return name.replaceAll( /(\/|\.\.|:)/g, '_' )
+			
+			const ext = $mol_file_extensions_mime[ this.type() ] ?? 'bin'
+			return `${ this.link() }.${ ext }`
+			
 		}
 		
 		/** Mime type */
